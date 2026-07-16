@@ -48,14 +48,12 @@ function AdminAuth() {
 
   return (
     <div className="min-h-screen">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground"><KeyRound className="h-4 w-4" /></span>
-          keylinks
-        </Link>
+      <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-6">
+        <Logo />
+        <ThemeToggle />
       </header>
-      <main className="mx-auto max-w-md px-6 pt-16">
-        <div className="glass-card rounded-2xl p-8">
+      <main className="mx-auto max-w-md px-5 pt-8 sm:pt-16 sm:px-6">
+        <div className="glass-card rounded-2xl p-6 sm:p-8">
           <div className="mb-6 flex items-center gap-2 text-xs text-muted-foreground"><ShieldCheck className="h-3.5 w-3.5" /> Admin only</div>
           <h1 className="text-2xl font-semibold tracking-tight">{mode === "in" ? "Sign in" : "Create admin account"}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{mode === "in" ? "Access the admin dashboard." : "The first account becomes the admin."}</p>
