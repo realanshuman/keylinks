@@ -1,11 +1,13 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { KeyRound, LogOut, Search, Trash2, Ban, RotateCcw } from "lucide-react";
+import { LogOut, Search, Trash2, Ban, RotateCcw, Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Logo } from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const Route = createFileRoute("/admin/dashboard")({
   component: Dashboard,
