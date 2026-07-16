@@ -63,7 +63,7 @@ function RedeemPage() {
     setBusy(true);
     try {
       const ph = state.meta.hasPassword ? await hashPassword(pw) : null;
-      const { data, error } = await supabase.rpc("redeem_link", { _slug: slug, _password_hash: ph } as any);
+      const { data, error } = await (supabase as any).rpc("redeem_link", { _slug: slug, _password_hash: ph });
       if (error) {
         const msg = (error.message || "").toLowerCase();
         if (msg.includes("wrong_password")) toast.error("Wrong password");
