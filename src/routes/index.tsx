@@ -428,32 +428,6 @@ function Index() {
             </div>
           </FadeUp>
 
-          {/* Feature strip */}
-          <div id="features" className="mt-10 scroll-mt-24 sm:mt-14">
-            <Stagger inView className="grid gap-3 sm:grid-cols-3">
-              <StaggerItem>
-                <Feature
-                  icon={<ShieldCheck className="h-4 w-4" />}
-                  title="Password protected"
-                  body="Optional password gate before code reveal."
-                />
-              </StaggerItem>
-              <StaggerItem>
-                <Feature
-                  icon={<Clock className="h-4 w-4" />}
-                  title="Expires when you want"
-                  body="From 1 day to never — you're in control."
-                />
-              </StaggerItem>
-              <StaggerItem>
-                <Feature
-                  icon={<QrCode className="h-4 w-4" />}
-                  title="QR ready"
-                  body="Every link comes with a downloadable QR code."
-                />
-              </StaggerItem>
-            </Stagger>
-          </div>
 
           {/* How it works */}
           <FadeUp inView>
