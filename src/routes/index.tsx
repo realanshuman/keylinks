@@ -475,7 +475,7 @@ function Index() {
             {results.length > 0 && (
               <motion.section
                 id="results"
-                className="mt-14 scroll-mt-24"
+                className="mt-10 scroll-mt-24 sm:mt-14"
                 initial={reduce ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduce ? undefined : { opacity: 0 }}
