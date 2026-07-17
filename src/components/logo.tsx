@@ -38,7 +38,7 @@ export function Logo({ size = 28, withText = true }: { size?: number; withText?:
           className="text-base font-semibold tracking-tight"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          keylinks
+          key<span className="gradient-text">links</span>
         </span>
       )}
     </Link>

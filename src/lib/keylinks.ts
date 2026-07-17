@@ -1,3 +1,13 @@
+/**
+ * Public base URL for all generated redeem links.
+ * Always uses the primary custom domain, regardless of where the app is accessed.
+ */
+export const PUBLIC_BASE_URL = "https://keylinks.space";
+
+export function buildRedeemUrl(slug: string): string {
+  return `${PUBLIC_BASE_URL}/r/${slug}`;
+}
+
 export function makeSlug(len = 12): string {
   const alphabet = "abcdefghijkmnpqrstuvwxyz23456789";
   const bytes = new Uint8Array(len);
