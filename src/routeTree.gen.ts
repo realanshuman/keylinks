@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RSlugRouteImport } from './routes/r.$slug'
+import { Route as AuthForgotRouteImport } from './routes/auth.forgot'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 
 const AuthRoute = AuthRouteImport.update({
@@ -35,6 +36,11 @@ const RSlugRoute = RSlugRouteImport.update({
   path: '/r/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthForgotRoute = AuthForgotRouteImport.update({
+  id: '/forgot',
+  path: '/forgot',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
@@ -43,37 +49,59 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/forgot': typeof AuthForgotRoute
   '/r/$slug': typeof RSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/forgot': typeof AuthForgotRoute
   '/r/$slug': typeof RSlugRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/forgot': typeof AuthForgotRoute
   '/r/$slug': typeof RSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/admin/dashboard' | '/r/$slug' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin/dashboard'
+    | '/auth/forgot'
+    | '/r/$slug'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin/dashboard' | '/r/$slug' | '/admin'
-  id: '__root__' | '/' | '/auth' | '/admin/dashboard' | '/r/$slug' | '/admin/'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin/dashboard'
+    | '/auth/forgot'
+    | '/r/$slug'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/admin/dashboard'
+    | '/auth/forgot'
+    | '/r/$slug'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   AdminDashboardRoute: typeof AdminDashboardRoute
   RSlugRoute: typeof RSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -109,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/forgot': {
+      id: '/auth/forgot'
+      path: '/forgot'
+      fullPath: '/auth/forgot'
+      preLoaderRoute: typeof AuthForgotRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/admin/dashboard'
@@ -119,9 +154,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthRouteChildren {
+  AuthForgotRoute: typeof AuthForgotRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotRoute: AuthForgotRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   AdminDashboardRoute: AdminDashboardRoute,
   RSlugRoute: RSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
