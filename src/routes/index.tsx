@@ -11,10 +11,8 @@ import {
   Link as LinkIcon,
   Loader2,
   ShieldCheck,
-  Zap,
   Lock,
   Clock,
-  QrCode,
   Infinity as InfinityIcon,
   ArrowRight,
 } from "lucide-react";
