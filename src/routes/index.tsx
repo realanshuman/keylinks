@@ -123,10 +123,9 @@ function Index() {
         .select("id, slug, code, created_at, expires_at, max_uses");
       if (error) throw error;
 
-      const origin = window.location.origin;
       const generated: Generated[] = await Promise.all(
         (data || []).map(async (r) => {
-          const url = `${origin}/r/${r.slug}`;
+          const url = buildRedeemUrl(r.slug);
           const qr = await QRCode.toDataURL(url, { margin: 1, width: 320 });
           return {
             id: r.id,
