@@ -11,14 +11,12 @@ import {
   Link as LinkIcon,
   Loader2,
   ShieldCheck,
+  Zap,
   Lock,
   Clock,
   QrCode,
   Infinity as InfinityIcon,
   ArrowRight,
-  KeyRound,
-  SlidersHorizontal,
-  NotebookPen,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -35,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { makeSlug, expiryFromPreset, hashPassword, type ExpiryPreset } from "@/lib/keylinks";
 import { FadeUp, Stagger, StaggerItem, EASE } from "@/components/motion";
-import { SiteHeader, HeaderNavLink } from "@/components/site-header";
+import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
 export const Route = createFileRoute("/")({
@@ -209,16 +207,10 @@ function Index() {
   return (
     <div className="relative min-h-screen overflow-x-clip">
       <SiteHeader
-        nav={
-          <>
-            <HeaderNavLink href="#features">Features</HeaderNavLink>
-            <HeaderNavLink href="#how">How it works</HeaderNavLink>
-          </>
-        }
-        actions={
-          <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
-            <a href="/admin">Admin</a>
-          </Button>
+        badge={
+          <span className="hidden rounded-full border border-border bg-card/50 px-3 py-1 text-xs text-muted-foreground sm:inline-flex">
+            Free forever
+          </span>
         }
       />
 
@@ -227,20 +219,20 @@ function Index() {
         <div className="hero-glow absolute inset-x-0 top-0 -z-10 h-[520px]" />
         <div className="grid-bg absolute inset-x-0 top-0 -z-10 h-[520px] opacity-70" />
 
-        <main className="mx-auto max-w-3xl px-4 pb-16 pt-8 sm:px-6 sm:pt-14">
+        <main className="mx-auto max-w-3xl px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
           <Stagger className="mb-8 text-center sm:mb-12">
             <StaggerItem>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
                 <Sparkles className="h-3 w-3 text-primary" /> Instant, secure, free
               </div>
             </StaggerItem>
             <StaggerItem>
-              <h1 className="text-4xl font-bold leading-[1.02] sm:text-6xl">
+              <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
                 Turn codes into <span className="gradient-text">secure redeem links</span>
               </h1>
             </StaggerItem>
             <StaggerItem>
-              <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
+              <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
                 Share coupons, license keys and activation codes as beautiful, protected links —
                 with expiries, passwords and QR codes.
               </p>
@@ -250,133 +242,97 @@ function Index() {
           {/* Form card */}
           <FadeUp delay={0.25}>
             <div className="glass-card overflow-hidden rounded-3xl">
-              <div className="border-b border-border/60 bg-gradient-to-b from-accent/40 to-transparent px-5 py-5 sm:px-8">
-                <h2 className="text-lg font-semibold">Create a redeem link</h2>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  Only the code is required — everything else is optional.
+              <div className="border-b border-border/60 bg-gradient-to-b from-accent/40 to-transparent px-4 py-4 sm:px-7">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary/15 text-primary">
+                    <Zap className="h-3.5 w-3.5" />
+                  </span>
+                  Create a redeem link
+                </div>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Fill in what you need. Everything except the code is optional.
                 </p>
               </div>
 
-              <div className="grid gap-8 p-5 sm:p-8">
-                {/* Step 1 — the code */}
-                <FormSection
-                  step={1}
-                  icon={<KeyRound className="h-4 w-4" />}
-                  title="Paste your code"
-                  desc="One code per line — multiple lines create a link for each code."
-                >
-                  <Field label="Redeem code" hint="Required">
-                    <Textarea
-                      value={codes}
-                      onChange={(e) => setCodes(e.target.value)}
-                      rows={4}
-                      placeholder={"ABCD-1234-EFGH\nWXYZ-5678-IJKL"}
-                      className="resize-none font-mono text-sm"
-                    />
-                    <AnimatePresence initial={false}>
-                      {codeList.length > 1 && (
-                        <motion.div
-                          initial={reduce ? false : { opacity: 0, y: -4, height: 0 }}
-                          animate={{ opacity: 1, y: 0, height: "auto" }}
-                          exit={reduce ? undefined : { opacity: 0, y: -4, height: 0 }}
-                          transition={{ duration: 0.25, ease: EASE }}
-                          className="overflow-hidden"
-                        >
-                          <div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                            <LinkIcon className="h-3 w-3" /> Bulk mode — {codeList.length} links
-                            will be created
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </Field>
-                  <AnimatePresence initial={false}>
-                    {codeList.length <= 1 && (
+              <div className="grid gap-5 p-4 sm:p-7">
+                <Field label="Label" hint="Optional — helps you remember">
+                  <Input
+                    value={label}
+                    onChange={(e) => setLabel(e.target.value)}
+                    placeholder="e.g. Customer name, Order #1234"
+                  />
+                </Field>
+
+                <Field label="Redeem code" hint="One per line for bulk">
+                  <Textarea
+                    value={codes}
+                    onChange={(e) => setCodes(e.target.value)}
+                    rows={4}
+                    placeholder={"ABCD-1234-EFGH\nWXYZ-5678-IJKL"}
+                    className="resize-none font-mono text-sm"
+                  />
+                  <AnimatePresence>
+                    {codeList.length > 1 && (
                       <motion.div
-                        initial={reduce ? false : { opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={reduce ? undefined : { opacity: 0, height: 0 }}
+                        initial={reduce ? false : { opacity: 0, y: -4, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                        exit={reduce ? undefined : { opacity: 0, y: -4, height: 0 }}
                         transition={{ duration: 0.25, ease: EASE }}
                         className="overflow-hidden"
                       >
-                        <Field label="How many links" hint="Copies of the same code">
-                          <Input
-                            type="number"
-                            inputMode="numeric"
-                            min={1}
-                            max={500}
-                            value={quantity}
-                            onChange={(e) => setQuantity(Number(e.target.value))}
-                            className="sm:max-w-[200px]"
-                          />
-                        </Field>
+                        <div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                          <LinkIcon className="h-3 w-3" /> Bulk mode — {codeList.length} links will
+                          be created
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </FormSection>
+                </Field>
 
-                <div className="border-t border-border/60" />
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field
+                    label="How many links"
+                    hint={codeList.length > 1 ? "Ignored in bulk mode" : "Copies of same code"}
+                    icon={<Copy className="h-3.5 w-3.5" />}
+                  >
+                    <Input
+                      type="number"
+                      inputMode="numeric"
+                      min={1}
+                      max={500}
+                      value={quantity}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      disabled={codeList.length > 1}
+                    />
+                  </Field>
+                  <Field label="Expires" icon={<Clock className="h-3.5 w-3.5" />}>
+                    <Select value={expiry} onValueChange={(v) => setExpiry(v as ExpiryPreset)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="never">Never</SelectItem>
+                        <SelectItem value="1d">In 1 day</SelectItem>
+                        <SelectItem value="7d">In 7 days</SelectItem>
+                        <SelectItem value="30d">In 30 days</SelectItem>
+                        <SelectItem value="custom">Pick a date</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {expiry === "custom" && (
+                      <Input
+                        type="datetime-local"
+                        value={customExpiry}
+                        onChange={(e) => setCustomExpiry(e.target.value)}
+                        className="mt-2"
+                      />
+                    )}
+                  </Field>
+                </div>
 
-                {/* Step 2 — access rules */}
-                <FormSection
-                  step={2}
-                  icon={<SlidersHorizontal className="h-4 w-4" />}
-                  title="Set access rules"
-                  desc="Optional. Control how long the link lives and who can open it."
-                >
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Expires" icon={<Clock className="h-3.5 w-3.5" />}>
-                      <Select value={expiry} onValueChange={(v) => setExpiry(v as ExpiryPreset)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="never">Never</SelectItem>
-                          <SelectItem value="1d">In 1 day</SelectItem>
-                          <SelectItem value="7d">In 7 days</SelectItem>
-                          <SelectItem value="30d">In 30 days</SelectItem>
-                          <SelectItem value="custom">Pick a date</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {expiry === "custom" && (
-                        <Input
-                          type="datetime-local"
-                          value={customExpiry}
-                          onChange={(e) => setCustomExpiry(e.target.value)}
-                          className="mt-2"
-                        />
-                      )}
-                    </Field>
-                    <Field label="Max uses" icon={<InfinityIcon className="h-3.5 w-3.5" />}>
-                      <Select value={maxUsesPreset} onValueChange={setMaxUsesPreset}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unlimited">Unlimited</SelectItem>
-                          <SelectItem value="1">1 use</SelectItem>
-                          <SelectItem value="2">2 uses</SelectItem>
-                          <SelectItem value="5">5 uses</SelectItem>
-                          <SelectItem value="10">10 uses</SelectItem>
-                          <SelectItem value="custom">Custom</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {maxUsesPreset === "custom" && (
-                        <Input
-                          type="number"
-                          inputMode="numeric"
-                          min={1}
-                          value={customMaxUses}
-                          onChange={(e) => setCustomMaxUses(e.target.value)}
-                          className="mt-2"
-                          placeholder="e.g. 25"
-                        />
-                      )}
-                    </Field>
-                  </div>
+                <div className="grid gap-5 sm:grid-cols-2">
                   <Field
                     label="Password"
-                    hint="Asked before reveal"
+                    hint="Optional protection"
                     icon={<Lock className="h-3.5 w-3.5" />}
                   >
                     <Input
@@ -386,37 +342,46 @@ function Index() {
                       placeholder="Leave blank for none"
                     />
                   </Field>
-                </FormSection>
-
-                <div className="border-t border-border/60" />
-
-                {/* Step 3 — private records */}
-                <FormSection
-                  step={3}
-                  icon={<NotebookPen className="h-4 w-4" />}
-                  title="For your records"
-                  desc="Optional. Only you see these — never the recipient."
-                >
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Label">
+                  <Field label="Max uses" icon={<InfinityIcon className="h-3.5 w-3.5" />}>
+                    <Select value={maxUsesPreset} onValueChange={setMaxUsesPreset}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unlimited">Unlimited</SelectItem>
+                        <SelectItem value="1">1 use</SelectItem>
+                        <SelectItem value="2">2 uses</SelectItem>
+                        <SelectItem value="5">5 uses</SelectItem>
+                        <SelectItem value="10">10 uses</SelectItem>
+                        <SelectItem value="custom">Custom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {maxUsesPreset === "custom" && (
                       <Input
-                        value={label}
-                        onChange={(e) => setLabel(e.target.value)}
-                        placeholder="e.g. Customer name, Order #1234"
+                        type="number"
+                        inputMode="numeric"
+                        min={1}
+                        value={customMaxUses}
+                        onChange={(e) => setCustomMaxUses(e.target.value)}
+                        className="mt-2"
+                        placeholder="e.g. 25"
                       />
-                    </Field>
-                    <Field label="Notes">
-                      <Input
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="Anything you want to remember"
-                      />
-                    </Field>
-                  </div>
-                </FormSection>
+                    )}
+                  </Field>
+                </div>
+
+                <Field label="Notes" hint="Private to you">
+                  <Textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    rows={2}
+                    placeholder="Anything you want to remember"
+                    className="resize-none min-h-[56px]"
+                  />
+                </Field>
               </div>
 
-              <div className="border-t border-border/60 bg-gradient-to-b from-transparent to-accent/40 p-5 sm:p-8">
+              <div className="border-t border-border/60 bg-gradient-to-b from-transparent to-accent/40 p-4 sm:p-7">
                 <Button
                   size="lg"
                   onClick={generate}
@@ -441,7 +406,7 @@ function Index() {
           </FadeUp>
 
           {/* Feature strip */}
-          <div id="features" className="mt-16 scroll-mt-24">
+          <div id="features" className="mt-14 scroll-mt-24">
             <Stagger inView className="grid gap-3 sm:grid-cols-3">
               <StaggerItem>
                 <Feature
@@ -471,7 +436,7 @@ function Index() {
           <FadeUp inView>
             <div
               id="how"
-              className="mt-16 scroll-mt-24 rounded-3xl border border-border/60 bg-card/40 p-6 sm:p-8"
+              className="mt-14 rounded-3xl border border-border/60 bg-card/40 p-6 sm:p-8"
             >
               <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
                 <Step n={1} title="Paste your code" body="One code or many — bulk works too." />
@@ -486,7 +451,7 @@ function Index() {
             {results.length > 0 && (
               <motion.section
                 id="results"
-                className="mt-16 scroll-mt-24"
+                className="mt-14 scroll-mt-24"
                 initial={reduce ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduce ? undefined : { opacity: 0 }}
@@ -564,38 +529,6 @@ function Index() {
 
       <SiteFooter />
     </div>
-  );
-}
-
-function FormSection({
-  step,
-  icon,
-  title,
-  desc,
-  children,
-}: {
-  step: number;
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section>
-      <div className="flex items-start gap-3">
-        <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-primary">
-          {icon}
-        </span>
-        <div>
-          <h3 className="text-sm font-semibold">
-            <span className="mr-1.5 text-muted-foreground/70">{step}.</span>
-            {title}
-          </h3>
-          <p className="mt-0.5 text-xs text-muted-foreground">{desc}</p>
-        </div>
-      </div>
-      <div className="mt-5 grid gap-5 sm:pl-11">{children}</div>
-    </section>
   );
 }
 
