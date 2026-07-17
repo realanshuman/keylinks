@@ -9,11 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RSlugRouteImport } from './routes/r.$slug'
+import { Route as AuthResetRouteImport } from './routes/auth.reset'
+import { Route as AuthForgotRouteImport } from './routes/auth.forgot'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -29,6 +43,16 @@ const RSlugRoute = RSlugRouteImport.update({
   path: '/r/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthResetRoute = AuthResetRouteImport.update({
+  id: '/reset',
+  path: '/reset',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthForgotRoute = AuthForgotRouteImport.update({
+  id: '/forgot',
+  path: '/forgot',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
@@ -37,33 +61,72 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/forgot': typeof AuthForgotRoute
+  '/auth/reset': typeof AuthResetRoute
   '/r/$slug': typeof RSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/forgot': typeof AuthForgotRoute
+  '/auth/reset': typeof AuthResetRoute
   '/r/$slug': typeof RSlugRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/auth/forgot': typeof AuthForgotRoute
+  '/auth/reset': typeof AuthResetRoute
   '/r/$slug': typeof RSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin/dashboard' | '/r/$slug' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/admin/dashboard'
+    | '/auth/forgot'
+    | '/auth/reset'
+    | '/r/$slug'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/dashboard' | '/r/$slug' | '/admin'
-  id: '__root__' | '/' | '/admin/dashboard' | '/r/$slug' | '/admin/'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/admin/dashboard'
+    | '/auth/forgot'
+    | '/auth/reset'
+    | '/r/$slug'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/admin/dashboard'
+    | '/auth/forgot'
+    | '/auth/reset'
+    | '/r/$slug'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   RSlugRoute: typeof RSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -71,6 +134,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -92,6 +169,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/reset': {
+      id: '/auth/reset'
+      path: '/reset'
+      fullPath: '/auth/reset'
+      preLoaderRoute: typeof AuthResetRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/forgot': {
+      id: '/auth/forgot'
+      path: '/forgot'
+      fullPath: '/auth/forgot'
+      preLoaderRoute: typeof AuthForgotRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/admin/dashboard'
@@ -102,8 +193,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthRouteChildren {
+  AuthForgotRoute: typeof AuthForgotRoute
+  AuthResetRoute: typeof AuthResetRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotRoute: AuthForgotRoute,
+  AuthResetRoute: AuthResetRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   RSlugRoute: RSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
