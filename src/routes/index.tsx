@@ -219,20 +219,20 @@ function Index() {
         <div className="hero-glow absolute inset-x-0 top-0 -z-10 h-[520px]" />
         <div className="grid-bg absolute inset-x-0 top-0 -z-10 h-[520px] opacity-70" />
 
-        <main className="mx-auto max-w-3xl px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
-          <Stagger className="mb-8 text-center sm:mb-12">
+        <main className="mx-auto max-w-3xl px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-12">
+          <Stagger className="mb-6 text-center sm:mb-12">
             <StaggerItem>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-2.5 py-1 text-[11px] text-muted-foreground backdrop-blur sm:mb-5 sm:px-3 sm:text-xs">
                 <Sparkles className="h-3 w-3 text-primary" /> Instant, secure, free
               </div>
             </StaggerItem>
             <StaggerItem>
-              <h1 className="text-[40px] font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl">
+              <h1 className="text-[34px] font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl">
                 Turn codes into <span className="gradient-text">redeem</span> links.
               </h1>
             </StaggerItem>
             <StaggerItem>
-              <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:mt-5 sm:text-lg">
                 Share coupons, license keys and activation codes as beautiful, protected links —
                 with expiries, passwords and QR codes.
               </p>
@@ -241,20 +241,20 @@ function Index() {
 
           {/* Form card */}
           <FadeUp delay={0.25}>
-            <div className="glass-card overflow-hidden rounded-[28px] shadow-[var(--shadow-raised)]">
-              <div className="flex items-center justify-between gap-3 border-b border-border/60 bg-gradient-to-b from-accent/40 to-transparent px-5 py-4 sm:px-8 sm:py-5">
-                <div>
+            <div className="glass-card overflow-hidden rounded-3xl shadow-[var(--shadow-raised)] sm:rounded-[28px]">
+              <div className="flex items-center justify-between gap-3 border-b border-border/60 bg-gradient-to-b from-accent/40 to-transparent px-4 py-3.5 sm:px-8 sm:py-5">
+                <div className="min-w-0">
                   <div className="text-sm font-semibold tracking-tight">Create a redeem link</div>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    Only the code is required — everything else is optional.
+                    Only the code is required.
                   </p>
                 </div>
-                <span className="hidden rounded-full border border-border bg-background/60 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:inline-flex">
+                <span className="shrink-0 rounded-full border border-border bg-background/60 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Free
                 </span>
               </div>
 
-              <div className="grid gap-7 p-5 sm:p-8">
+              <div className="grid gap-6 p-4 sm:gap-7 sm:p-8">
                 {/* Step 1 — the code */}
                 <Section
                   step={1}
@@ -404,7 +404,7 @@ function Index() {
                 </Section>
               </div>
 
-              <div className="border-t border-border/60 bg-gradient-to-b from-transparent to-accent/40 p-5 sm:p-8">
+              <div className="border-t border-border/60 bg-gradient-to-b from-transparent to-accent/40 p-4 sm:p-8">
                 <Button
                   size="lg"
                   onClick={generate}
@@ -429,7 +429,7 @@ function Index() {
           </FadeUp>
 
           {/* Feature strip */}
-          <div id="features" className="mt-14 scroll-mt-24">
+          <div id="features" className="mt-10 scroll-mt-24 sm:mt-14">
             <Stagger inView className="grid gap-3 sm:grid-cols-3">
               <StaggerItem>
                 <Feature
@@ -459,9 +459,9 @@ function Index() {
           <FadeUp inView>
             <div
               id="how"
-              className="mt-14 rounded-3xl border border-border/60 bg-card/40 p-6 sm:p-8"
+              className="mt-10 rounded-2xl border border-border/60 bg-card/40 p-5 sm:mt-14 sm:rounded-3xl sm:p-8"
             >
-              <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
+              <div className="grid gap-6 sm:grid-cols-3 sm:gap-6">
                 <Step n={1} title="Paste your code" body="One code or many — bulk works too." />
                 <Step n={2} title="Set rules" body="Password, expiry, and how many redemptions." />
                 <Step n={3} title="Share the link" body="Send the URL or QR. We handle the rest." />
@@ -469,12 +469,13 @@ function Index() {
             </div>
           </FadeUp>
 
+
           {/* Results */}
           <AnimatePresence>
             {results.length > 0 && (
               <motion.section
                 id="results"
-                className="mt-14 scroll-mt-24"
+                className="mt-10 scroll-mt-24 sm:mt-14"
                 initial={reduce ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduce ? undefined : { opacity: 0 }}
@@ -593,12 +594,12 @@ function Section({
 }) {
   return (
     <div className="grid gap-4">
-      <div className="flex items-start gap-3">
-        <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/12 text-xs font-semibold text-primary ring-1 ring-primary/20">
+      <div className="flex items-start gap-2.5 sm:gap-3">
+        <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary ring-1 ring-primary/20 sm:h-7 sm:w-7 sm:text-xs">
           {step}
         </span>
         <div className="min-w-0">
-          <div className="text-sm font-semibold tracking-tight text-foreground">{title}</div>
+          <div className="text-[15px] font-semibold tracking-tight text-foreground sm:text-sm">{title}</div>
           {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
         </div>
       </div>
@@ -609,7 +610,7 @@ function Section({
 
 function Feature({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="glass-card card-hover h-full rounded-2xl p-5">
+    <div className="glass-card card-hover h-full rounded-2xl p-4 sm:p-5">
       <div className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
         {icon}
       </div>

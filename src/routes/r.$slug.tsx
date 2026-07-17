@@ -128,7 +128,7 @@ function RedeemPage() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={stateKey} className="w-full" {...presenceProps(reduce)}>
             {state.kind === "loading" && (
-              <div className="glass-card w-full overflow-hidden rounded-3xl p-6 sm:p-8">
+              <div className="glass-card w-full overflow-hidden rounded-3xl p-5 sm:p-8">
                 <div className="shimmer mx-auto h-12 w-12 rounded-2xl" />
                 <div className="shimmer mx-auto mt-5 h-7 w-3/4 rounded-lg" />
                 <div className="shimmer mx-auto mt-3 h-4 w-1/2 rounded-lg" />
@@ -166,7 +166,7 @@ function RedeemPage() {
             )}
 
             {state.kind === "ready" && !state.revealed && (
-              <div className="glass-card w-full rounded-3xl p-6 text-center sm:p-8">
+              <div className="glass-card w-full rounded-3xl p-5 text-center sm:p-8">
                 <motion.div
                   initial={reduce ? false : { scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -180,7 +180,7 @@ function RedeemPage() {
                     {state.meta.label}
                   </div>
                 )}
-                <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                <h1 className="text-[22px] font-bold tracking-tight sm:text-3xl">
                   You've received a redeem code
                 </h1>
                 <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
@@ -226,7 +226,7 @@ function RedeemPage() {
             )}
 
             {state.kind === "ready" && state.revealed && (
-              <div className="glass-card w-full rounded-3xl p-6 text-center sm:p-8">
+              <div className="glass-card w-full rounded-3xl p-5 text-center sm:p-8">
                 <motion.div
                   initial={reduce ? false : { scale: 0.4, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -236,7 +236,7 @@ function RedeemPage() {
                 >
                   <ShieldCheck className="h-7 w-7" style={{ color: "var(--success)" }} />
                 </motion.div>
-                <h1 className="text-2xl font-bold tracking-tight">Here's your code</h1>
+                <h1 className="text-[22px] font-bold tracking-tight sm:text-3xl">Here's your code</h1>
                 <p className="mt-1 text-sm text-muted-foreground">Save it somewhere safe.</p>
                 <motion.div
                   initial={reduce ? false : { opacity: 0, filter: "blur(8px)", scale: 0.96 }}
@@ -280,7 +280,7 @@ function MessageCard({
   body: string;
 }) {
   return (
-    <div className="glass-card w-full rounded-3xl p-6 text-center sm:p-8">
+    <div className="glass-card w-full rounded-3xl p-5 text-center sm:p-8">
       <div
         className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full"
         style={{
@@ -290,7 +290,7 @@ function MessageCard({
       >
         {icon}
       </div>
-      <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+      <h1 className="text-[22px] font-bold tracking-tight sm:text-3xl">{title}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{body}</p>
       <Link
         to="/"
