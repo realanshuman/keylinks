@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { makeSlug, expiryFromPreset, hashPassword, type ExpiryPreset } from "@/lib/keylinks";
+import { makeSlug, expiryFromPreset, hashPassword, buildRedeemUrl, type ExpiryPreset } from "@/lib/keylinks";
 import { FadeUp, Stagger, StaggerItem, EASE } from "@/components/motion";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
