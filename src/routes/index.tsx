@@ -404,7 +404,7 @@ function Index() {
                 </Section>
               </div>
 
-              <div className="border-t border-border/60 bg-gradient-to-b from-transparent to-accent/40 p-5 sm:p-8">
+              <div className="border-t border-border/60 bg-gradient-to-b from-transparent to-accent/40 p-4 sm:p-8">
                 <Button
                   size="lg"
                   onClick={generate}
@@ -429,7 +429,7 @@ function Index() {
           </FadeUp>
 
           {/* Feature strip */}
-          <div id="features" className="mt-14 scroll-mt-24">
+          <div id="features" className="mt-10 scroll-mt-24 sm:mt-14">
             <Stagger inView className="grid gap-3 sm:grid-cols-3">
               <StaggerItem>
                 <Feature
@@ -459,15 +459,16 @@ function Index() {
           <FadeUp inView>
             <div
               id="how"
-              className="mt-14 rounded-3xl border border-border/60 bg-card/40 p-6 sm:p-8"
+              className="mt-10 rounded-2xl border border-border/60 bg-card/40 p-5 sm:mt-14 sm:rounded-3xl sm:p-8"
             >
-              <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
+              <div className="grid gap-6 sm:grid-cols-3 sm:gap-6">
                 <Step n={1} title="Paste your code" body="One code or many — bulk works too." />
                 <Step n={2} title="Set rules" body="Password, expiry, and how many redemptions." />
                 <Step n={3} title="Share the link" body="Send the URL or QR. We handle the rest." />
               </div>
             </div>
           </FadeUp>
+
 
           {/* Results */}
           <AnimatePresence>
