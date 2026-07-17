@@ -83,12 +83,15 @@ function Index() {
             ? Number(customMaxUses) || null
             : Number(maxUsesPreset);
       const passwordHash = password ? await hashPassword(password) : null;
+      const { data: sess } = await supabase.auth.getSession();
+      const createdBy = sess.session?.user.id ?? null;
 
       const rows: Array<{
         slug: string;
         label: string | null;
         code: string;
         notes: string | null;
+        created_by: string | null;
         password_hash: string | null;
         max_uses: number | null;
         expires_at: string | null;
