@@ -580,17 +580,6 @@ function Section({
   );
 }
 
-function Feature({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
-  return (
-    <div className="glass-card card-hover h-full rounded-2xl p-4 sm:p-5">
-      <div className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-        {icon}
-      </div>
-      <div className="text-sm font-semibold">{title}</div>
-      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{body}</p>
-    </div>
-  );
-}
 
 function Step({ n, title, body }: { n: number; title: string; body: string }) {
   return (
