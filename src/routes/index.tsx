@@ -594,12 +594,12 @@ function Section({
 }) {
   return (
     <div className="grid gap-4">
-      <div className="flex items-start gap-3">
-        <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/12 text-xs font-semibold text-primary ring-1 ring-primary/20">
+      <div className="flex items-start gap-2.5 sm:gap-3">
+        <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary ring-1 ring-primary/20 sm:h-7 sm:w-7 sm:text-xs">
           {step}
         </span>
         <div className="min-w-0">
-          <div className="text-sm font-semibold tracking-tight text-foreground">{title}</div>
+          <div className="text-[15px] font-semibold tracking-tight text-foreground sm:text-sm">{title}</div>
           {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
         </div>
       </div>
@@ -610,7 +610,7 @@ function Section({
 
 function Feature({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="glass-card card-hover h-full rounded-2xl p-5">
+    <div className="glass-card card-hover h-full rounded-2xl p-4 sm:p-5">
       <div className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
         {icon}
       </div>
