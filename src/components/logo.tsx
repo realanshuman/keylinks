@@ -33,7 +33,14 @@ export function Logo({ size = 28, withText = true }: { size?: number; withText?:
           <path d="M21 10v4" />
         </svg>
       </motion.span>
-      {withText && <span className="text-base">keylinks</span>}
+      {withText && (
+        <span
+          className="text-base font-semibold tracking-tight"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          keylinks
+        </span>
+      )}
     </Link>
   );
 }
