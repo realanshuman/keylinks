@@ -20,7 +20,7 @@ function NotFoundComponent() {
       <div className="hero-glow absolute inset-x-0 top-0 -z-10 h-[420px]" />
       <FadeUp className="w-full max-w-md">
         <div className="glass-card rounded-3xl p-8 text-center sm:p-10">
-          <div className="gradient-text text-7xl font-extrabold tracking-tight sm:text-8xl">
+          <div className="gradient-text font-display text-7xl font-bold tracking-tight sm:text-8xl">
             404
           </div>
           <p className="mt-3 text-sm text-muted-foreground">This page doesn't exist.</p>
@@ -116,7 +116,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
       },
     ],
   }),

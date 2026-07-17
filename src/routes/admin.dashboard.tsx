@@ -444,7 +444,10 @@ function Stat({ label, value, icon }: { label: string; value: number; icon: Reac
         <span className="text-primary">{icon}</span>
         {label}
       </div>
-      <AnimatedNumber value={value} className="mt-1 block text-2xl font-semibold tracking-tight" />
+      <AnimatedNumber
+        value={value}
+        className="mt-1 block font-display text-2xl font-semibold tracking-tight text-heading"
+      />
     </div>
   );
 }
