@@ -219,16 +219,8 @@ function Index() {
         <main className="mx-auto max-w-3xl px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-12">
           <Stagger className="mb-6 text-center sm:mb-12">
             <StaggerItem>
-              <div className="group mb-4 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-3 py-1.5 text-[11px] font-medium text-foreground/90 shadow-sm backdrop-blur sm:mb-5 sm:text-xs">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
-                </span>
-                <span className="uppercase tracking-[0.14em] text-muted-foreground">Now live</span>
-                <span className="h-3 w-px bg-border/80" />
-                <span className="inline-flex items-center gap-1 text-foreground">
-                  <Sparkles className="h-3 w-3 text-primary" /> Free forever
-                </span>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-2.5 py-1 text-[11px] text-muted-foreground backdrop-blur sm:mb-5 sm:px-3 sm:text-xs">
+                <Sparkles className="h-3 w-3 text-primary" /> Instant, secure, free
               </div>
             </StaggerItem>
             <StaggerItem>
@@ -238,8 +230,8 @@ function Index() {
             </StaggerItem>
             <StaggerItem>
               <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:mt-5 sm:text-lg">
-                Turn digital keys into modern redeem links that are easy to share, protected with
-                passwords, and expire automatically.
+                Share coupons, license keys and activation codes as beautiful, protected links —
+                with expiries, passwords and QR codes.
               </p>
             </StaggerItem>
           </Stagger>
