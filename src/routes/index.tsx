@@ -227,12 +227,12 @@ function Index() {
               </div>
             </StaggerItem>
             <StaggerItem>
-              <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
-                Turn codes into <span className="gradient-text">secure redeem links</span>
+              <h1 className="text-[40px] font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl">
+                Turn codes into <span className="gradient-text">redeem</span> links.
               </h1>
             </StaggerItem>
             <StaggerItem>
-              <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+              <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                 Share coupons, license keys and activation codes as beautiful, protected links —
                 with expiries, passwords and QR codes.
               </p>
