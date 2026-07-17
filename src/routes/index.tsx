@@ -11,10 +11,8 @@ import {
   Link as LinkIcon,
   Loader2,
   ShieldCheck,
-  Zap,
   Lock,
   Clock,
-  QrCode,
   Infinity as InfinityIcon,
   ArrowRight,
 } from "lucide-react";
@@ -428,32 +426,6 @@ function Index() {
             </div>
           </FadeUp>
 
-          {/* Feature strip */}
-          <div id="features" className="mt-10 scroll-mt-24 sm:mt-14">
-            <Stagger inView className="grid gap-3 sm:grid-cols-3">
-              <StaggerItem>
-                <Feature
-                  icon={<ShieldCheck className="h-4 w-4" />}
-                  title="Password protected"
-                  body="Optional password gate before code reveal."
-                />
-              </StaggerItem>
-              <StaggerItem>
-                <Feature
-                  icon={<Clock className="h-4 w-4" />}
-                  title="Expires when you want"
-                  body="From 1 day to never — you're in control."
-                />
-              </StaggerItem>
-              <StaggerItem>
-                <Feature
-                  icon={<QrCode className="h-4 w-4" />}
-                  title="QR ready"
-                  body="Every link comes with a downloadable QR code."
-                />
-              </StaggerItem>
-            </Stagger>
-          </div>
 
           {/* How it works */}
           <FadeUp inView>
@@ -608,17 +580,6 @@ function Section({
   );
 }
 
-function Feature({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
-  return (
-    <div className="glass-card card-hover h-full rounded-2xl p-4 sm:p-5">
-      <div className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-        {icon}
-      </div>
-      <div className="text-sm font-semibold">{title}</div>
-      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{body}</p>
-    </div>
-  );
-}
 
 function Step({ n, title, body }: { n: number; title: string; body: string }) {
   return (
