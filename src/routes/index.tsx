@@ -580,6 +580,33 @@ function Field({
   );
 }
 
+function Section({
+  step,
+  title,
+  subtitle,
+  children,
+}: {
+  step: number;
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="grid gap-4">
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/12 text-xs font-semibold text-primary ring-1 ring-primary/20">
+          {step}
+        </span>
+        <div className="min-w-0">
+          <div className="text-sm font-semibold tracking-tight text-foreground">{title}</div>
+          {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
+        </div>
+      </div>
+      <div className="grid gap-4 pl-0 sm:pl-10">{children}</div>
+    </div>
+  );
+}
+
 function Feature({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
     <div className="glass-card card-hover h-full rounded-2xl p-5">
