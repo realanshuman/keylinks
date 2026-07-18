@@ -81,12 +81,9 @@ function RedeemPage() {
     setBusy(true);
     try {
       const ph = state.meta.hasPassword ? await hashPassword(pw) : null;
-      const { data, error } = await (supabase as any).rpc("redeem_link", {
-        _slug: slug,
-        _password_hash: ph,
-      });
-      if (error) {
-        const msg = (error.message || "").toLowerCase();
+      const result = await redeemFn({ data: { slug, passwordHash: ph } });
+      if (!result.ok) {
+        const msg = (result.error || "").toLowerCase();
         if (msg.includes("wrong_password")) toast.error("Wrong password");
         else if (msg.includes("expired")) {
           toast.error("Link expired");
@@ -100,19 +97,14 @@ function RedeemPage() {
         } else if (msg.includes("invalid")) {
           toast.error("Invalid link");
           setState({ kind: "invalid" });
-        } else toast.error(error.message || "Could not reveal code");
-        return;
-      }
-      const row: any = Array.isArray(data) ? data[0] : data;
-      if (!row?.code) {
-        toast.error("Could not reveal code");
+        } else toast.error(result.error || "Could not reveal code");
         return;
       }
       setState({
         kind: "ready",
         meta: state.meta,
-        revealed: row.code,
-        remaining: row.remaining_uses ?? null,
+        revealed: result.code,
+        remaining: result.remainingUses ?? null,
       });
     } catch (e: any) {
       toast.error(e.message ?? "Could not reveal code");
