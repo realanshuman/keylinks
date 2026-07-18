@@ -72,9 +72,9 @@ function RedeemPage() {
           expiresAt: data.expires_at,
         },
       });
-      await supabase.from("activity_logs").insert({ action: "viewed", link_id: data.id });
+      await recordView({ data: { slug } }).catch(() => {});
     })();
-  }, [slug]);
+  }, [slug, recordView]);
 
   async function reveal() {
     if (state.kind !== "ready") return;
