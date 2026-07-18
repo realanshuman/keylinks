@@ -86,6 +86,14 @@ function Index() {
       toast.error("Please enter at least one code");
       return;
     }
+    if (customSlug && !canUseCustomSlug) {
+      toast.error("Custom slug only works for a single link");
+      return;
+    }
+    if (customSlug && !slugValid) {
+      toast.error("Slug must be 3–40 chars: a–z, 0–9, hyphen");
+      return;
+    }
     setBusy(true);
     try {
       const expiresAt = expiryFromPreset(expiry, customExpiry);
