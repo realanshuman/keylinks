@@ -335,14 +335,14 @@ function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.length === 0 && (
+                  {pageRows.length === 0 && (
                     <tr>
                       <td colSpan={8}>
                         <EmptyState />
                       </td>
                     </tr>
                   )}
-                  {filtered.map((l) => {
+                  {pageRows.map((l) => {
                     const s = statusOf(l, Date.now());
                     return (
                       <React.Fragment key={l.id}>
