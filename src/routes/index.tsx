@@ -71,12 +71,14 @@ function Index() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const slugValid = !customSlug || /^[a-z0-9][a-z0-9-]{2,39}$/.test(customSlug);
-  const canUseCustomSlug = signedIn && codeList().length + Math.max(1, quantity - 1) <= 1;
+  const codeList = codes
+    .split(/\r?\n/)
+    .map((c) => c.trim())
+    .filter(Boolean);
 
-  function codeList() {
-    return codes.split(/\r?\n/).map((c) => c.trim()).filter(Boolean);
-  }
+  const slugValid = !customSlug || /^[a-z0-9][a-z0-9-]{2,39}$/.test(customSlug);
+  const canUseCustomSlug = signedIn && codeList.length <= 1 && quantity <= 1;
+
 
 
   async function generate() {
