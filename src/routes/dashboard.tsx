@@ -16,6 +16,13 @@ import {
   Timer,
   Inbox,
   Plus,
+  BarChart3,
+  Eye,
+  Globe,
+  Smartphone,
+  Monitor,
+  Tablet,
+  Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 
