@@ -325,6 +325,32 @@ function Index() {
                       placeholder="e.g. Customer name, Order #1234"
                     />
                   </Field>
+                  <Field
+                    label="Custom slug"
+                    hint={signedIn ? (canUseCustomSlug ? "Optional" : "Single link only") : "Sign in to unlock"}
+                    icon={<LinkIcon className="h-3.5 w-3.5" />}
+                  >
+                    <div className="flex items-stretch overflow-hidden rounded-md border border-input bg-background focus-within:border-ring">
+                      <span className="flex items-center whitespace-nowrap border-r border-input bg-muted/40 px-2.5 font-mono text-xs text-muted-foreground">
+                        keylinks.space/r/
+                      </span>
+                      <input
+                        value={customSlug}
+                        onChange={(e) =>
+                          setCustomSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
+                        }
+                        disabled={!signedIn || !canUseCustomSlug}
+                        placeholder={signedIn ? "welcome-2026" : "sign in to use"}
+                        maxLength={40}
+                        className="w-full bg-transparent px-3 py-2 font-mono text-sm outline-none placeholder:text-muted-foreground/60 disabled:cursor-not-allowed disabled:opacity-60"
+                      />
+                    </div>
+                    {customSlug && !slugValid && (
+                      <p className="mt-1 text-xs text-destructive">
+                        3–40 chars, lowercase letters, numbers, hyphen. Must start with a letter or number.
+                      </p>
+                    )}
+                  </Field>
                 </Section>
 
                 <div className="h-px w-full bg-border/60" />
