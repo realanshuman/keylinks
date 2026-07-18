@@ -291,9 +291,9 @@ function Dashboard() {
                   <tr>
                     <th className="px-3 py-2.5 font-medium">Slug</th>
                     <th className="px-3 py-2.5 font-medium">Label</th>
-                    <th className="px-3 py-2.5 font-medium">Code</th>
                     <th className="px-3 py-2.5 font-medium">Status</th>
-                    <th className="px-3 py-2.5 font-medium">Uses</th>
+                    <th className="px-3 py-2.5 font-medium">Views</th>
+                    <th className="px-3 py-2.5 font-medium">Redeems</th>
                     <th className="px-3 py-2.5 font-medium">Expires</th>
                     <th className="px-3 py-2.5 font-medium">Created</th>
                     <th className="px-3 py-2.5"></th>
