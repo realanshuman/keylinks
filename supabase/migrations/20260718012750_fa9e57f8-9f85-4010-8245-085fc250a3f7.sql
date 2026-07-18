@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.redeem_link(text, text);
