@@ -310,8 +310,8 @@ function Dashboard() {
                   {filtered.map((l) => {
                     const s = statusOf(l, Date.now());
                     return (
-                      <>
-                      <tr key={l.id} className="border-t border-border transition-colors hover:bg-accent/30">
+                      <React.Fragment key={l.id}>
+                      <tr className="border-t border-border transition-colors hover:bg-accent/30">
                         <td className="px-3 py-2.5 font-mono text-xs">
                           <a
                             target="_blank"
