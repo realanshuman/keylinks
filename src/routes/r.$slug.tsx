@@ -36,6 +36,8 @@ function RedeemPage() {
   const [pw, setPw] = useState("");
   const [busy, setBusy] = useState(false);
   const reduce = useReducedMotion();
+  const recordView = useServerFn(recordLinkView);
+  const redeemFn = useServerFn(redeemLinkServer);
 
   useEffect(() => {
     (async () => {
