@@ -321,12 +321,14 @@ function Dashboard() {
                             /r/{l.slug}
                           </a>
                         </td>
-                        <td className="max-w-[160px] truncate px-3 py-2.5">
+                        <td className="max-w-[180px] truncate px-3 py-2.5">
                           {l.label ?? <span className="text-muted-foreground">—</span>}
                         </td>
-                        <td className="max-w-[160px] truncate px-3 py-2.5 font-mono text-xs">{l.code}</td>
                         <td className="px-3 py-2.5">
                           <StatusBadge status={s} />
+                        </td>
+                        <td className="px-3 py-2.5 tabular-nums text-muted-foreground">
+                          {viewCounts[l.id] ?? 0}
                         </td>
                         <td className="px-3 py-2.5 tabular-nums">
                           {l.use_count}
@@ -340,6 +342,12 @@ function Dashboard() {
                         </td>
                         <td className="px-3 py-2.5 text-right">
                           <div className="flex justify-end gap-1">
+                            <IconAction
+                              title="Analytics"
+                              onClick={() => setExpandedId(expandedId === l.id ? null : l.id)}
+                            >
+                              <BarChart3 className="h-3.5 w-3.5" />
+                            </IconAction>
                             <IconAction title="Copy link" onClick={() => copyLink(l)}>
                               <Copy className="h-3.5 w-3.5" />
                             </IconAction>
@@ -359,6 +367,17 @@ function Dashboard() {
                           </div>
                         </td>
                       </tr>
+                      {expandedId === l.id && (
+                        <tr className="border-t border-border bg-accent/20">
+                          <td colSpan={8} className="px-3 py-4">
+                            <LinkAnalyticsPanel
+                              link={l}
+                              viewsCount={viewCounts[l.id] ?? 0}
+                            />
+                          </td>
+                        </tr>
+                      )}
+                      </>
                     );
                   })}
                 </tbody>
