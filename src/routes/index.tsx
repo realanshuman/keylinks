@@ -148,7 +148,15 @@ function Index() {
         .from("links")
         .insert(rows)
         .select("id, slug, code, created_at, expires_at, max_uses");
-      if (error) throw error;
+      if (error) {
+        const m = (error.message || "").toLowerCase();
+        if (m.includes("duplicate") || m.includes("unique") || error.code === "23505") {
+          throw new Error("That slug is already taken — try another");
+        }
+        if (m.includes("reserved_slug")) throw new Error("That slug is reserved — try another");
+        if (m.includes("links_slug_format")) throw new Error("Slug must be 3–40 chars: a–z, 0–9, hyphen");
+        throw error;
+      }
 
       const generated: Generated[] = await Promise.all(
         (data || []).map(async (r) => {
