@@ -422,12 +422,12 @@ function Dashboard() {
 
             {/* Mobile cards */}
             <div className="grid gap-3 md:hidden">
-              {filtered.length === 0 && (
+              {pageRows.length === 0 && (
                 <div className="rounded-xl border border-border">
                   <EmptyState />
                 </div>
               )}
-              {filtered.map((l) => {
+              {pageRows.map((l) => {
                 const s = statusOf(l, Date.now());
                 return (
                   <div key={l.id} className="rounded-xl border border-border bg-background/40 p-3.5">
