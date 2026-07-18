@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { Copy, ShieldCheck, TriangleAlert, Lock, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useServerFn } from "@tanstack/react-start";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { hashPassword } from "@/lib/keylinks";
+import { recordLinkView, redeemLinkServer } from "@/lib/analytics.functions";
 import { presenceProps, EASE } from "@/components/motion";
 import { SiteHeader } from "@/components/site-header";
 
