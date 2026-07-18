@@ -67,6 +67,8 @@ function Dashboard() {
   const [ready, setReady] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [links, setLinks] = useState<LinkRow[]>([]);
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const reduce = useReducedMotion();
@@ -92,7 +94,20 @@ function Dashboard() {
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) return toast.error(error.message);
-    setLinks((data as LinkRow[]) || []);
+    const rows = (data as LinkRow[]) || [];
+    setLinks(rows);
+    if (rows.length > 0) {
+      const ids = rows.map((r) => r.id);
+      const { data: views } = await supabase
+        .from("link_views")
+        .select("link_id")
+        .in("link_id", ids);
+      const counts: Record<string, number> = {};
+      (views || []).forEach((v: any) => {
+        counts[v.link_id] = (counts[v.link_id] || 0) + 1;
+      });
+      setViewCounts(counts);
+    }
   }
 
   const stats = useMemo(() => {
