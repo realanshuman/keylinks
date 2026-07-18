@@ -59,14 +59,25 @@ function Index() {
   const [maxUsesPreset, setMaxUsesPreset] = useState("unlimited");
   const [customMaxUses, setCustomMaxUses] = useState("");
   const [notes, setNotes] = useState("");
+  const [customSlug, setCustomSlug] = useState("");
+  const [signedIn, setSignedIn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [results, setResults] = useState<Generated[]>([]);
   const reduce = useReducedMotion();
 
-  const codeList = codes
-    .split(/\r?\n/)
-    .map((c) => c.trim())
-    .filter(Boolean);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const slugValid = !customSlug || /^[a-z0-9][a-z0-9-]{2,39}$/.test(customSlug);
+  const canUseCustomSlug = signedIn && codeList().length + Math.max(1, quantity - 1) <= 1;
+
+  function codeList() {
+    return codes.split(/\r?\n/).map((c) => c.trim()).filter(Boolean);
+  }
+
 
   async function generate() {
     if (codeList.length === 0) {
