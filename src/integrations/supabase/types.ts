@@ -49,6 +49,47 @@ export type Database = {
           },
         ]
       }
+      link_views: {
+        Row: {
+          country: string | null
+          device: string | null
+          id: string
+          ip: string | null
+          link_id: string
+          referrer: string | null
+          user_agent: string | null
+          viewed_at: string
+        }
+        Insert: {
+          country?: string | null
+          device?: string | null
+          id?: string
+          ip?: string | null
+          link_id: string
+          referrer?: string | null
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          country?: string | null
+          device?: string | null
+          id?: string
+          ip?: string | null
+          link_id?: string
+          referrer?: string | null
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_views_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       links: {
         Row: {
           code: string
@@ -96,23 +137,32 @@ export type Database = {
       }
       redemptions: {
         Row: {
+          country: string | null
+          device: string | null
           id: string
           ip: string | null
           link_id: string
+          referrer: string | null
           revealed_at: string
           user_agent: string | null
         }
         Insert: {
+          country?: string | null
+          device?: string | null
           id?: string
           ip?: string | null
           link_id: string
+          referrer?: string | null
           revealed_at?: string
           user_agent?: string | null
         }
         Update: {
+          country?: string | null
+          device?: string | null
           id?: string
           ip?: string | null
           link_id?: string
+          referrer?: string | null
           revealed_at?: string
           user_agent?: string | null
         }
@@ -160,13 +210,27 @@ export type Database = {
         }
         Returns: boolean
       }
-      redeem_link: {
-        Args: { _password_hash: string; _slug: string }
-        Returns: {
-          code: string
-          remaining_uses: number
-        }[]
-      }
+      redeem_link:
+        | {
+            Args: { _password_hash: string; _slug: string }
+            Returns: {
+              code: string
+              remaining_uses: number
+            }[]
+          }
+        | {
+            Args: {
+              _country?: string
+              _device?: string
+              _password_hash: string
+              _referrer?: string
+              _slug: string
+            }
+            Returns: {
+              code: string
+              remaining_uses: number
+            }[]
+          }
     }
     Enums: {
       app_role: "admin"
