@@ -130,9 +130,10 @@ function Index() {
             expires_at: expiresAt,
           });
       } else {
+        const useCustom = !!(customSlug && canUseCustomSlug);
         for (let i = 0; i < Math.max(1, quantity); i++)
           rows.push({
-            slug: makeSlug(),
+            slug: useCustom ? customSlug : makeSlug(),
             label: label || null,
             code: codeList[0],
             notes: notes || null,
