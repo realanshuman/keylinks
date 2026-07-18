@@ -73,11 +73,11 @@ export const redeemLinkServer = createServerFn({ method: "POST" })
     const ctx = readContext();
     const { data: result, error } = await supabase.rpc("redeem_link", {
       _slug: data.slug,
-      _password_hash: data.passwordHash,
-      _country: ctx.country,
-      _referrer: ctx.referrer,
-      _device: ctx.device,
-    });
+      _password_hash: data.passwordHash as string,
+      _country: ctx.country ?? undefined,
+      _referrer: ctx.referrer ?? undefined,
+      _device: ctx.device ?? undefined,
+    } as any);
     if (error) {
       return { ok: false as const, error: error.message };
     }
