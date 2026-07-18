@@ -23,6 +23,8 @@ import {
   Monitor,
   Tablet,
   Bot,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -62,15 +64,19 @@ function statusOf(l: LinkRow, now: number): LinkStatus {
 const FILTERS = ["all", "active", "expired", "used", "disabled"] as const;
 type Filter = (typeof FILTERS)[number];
 
+const PAGE_SIZE = 20;
+
 function Dashboard() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [links, setLinks] = useState<LinkRow[]>([]);
   const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+  const [pendingCountIds, setPendingCountIds] = useState<Set<string>>(new Set());
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [page, setPage] = useState(1);
   const reduce = useReducedMotion();
 
   useEffect(() => {
@@ -89,25 +95,11 @@ function Dashboard() {
   async function load(uid: string) {
     const { data, error } = await supabase
       .from("links")
-      .select("*")
+      .select("id,slug,label,code,created_at,expires_at,max_uses,use_count,disabled")
       .eq("created_by", uid)
-      .order("created_at", { ascending: false })
-      .limit(500);
+      .order("created_at", { ascending: false });
     if (error) return toast.error(error.message);
-    const rows = (data as LinkRow[]) || [];
-    setLinks(rows);
-    if (rows.length > 0) {
-      const ids = rows.map((r) => r.id);
-      const { data: views } = await supabase
-        .from("link_views")
-        .select("link_id")
-        .in("link_id", ids);
-      const counts: Record<string, number> = {};
-      (views || []).forEach((v: any) => {
-        counts[v.link_id] = (counts[v.link_id] || 0) + 1;
-      });
-      setViewCounts(counts);
-    }
+    setLinks((data as LinkRow[]) || []);
   }
 
   const stats = useMemo(() => {
@@ -145,6 +137,45 @@ function Dashboard() {
     });
   }, [links, q, filter]);
 
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const pageRows = useMemo(
+    () => filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [filtered, currentPage],
+  );
+
+  // Reset to page 1 when filters/search change
+  useEffect(() => {
+    setPage(1);
+  }, [q, filter]);
+
+  // Fetch view counts only for links visible on the current page (cached)
+  useEffect(() => {
+    const missing = pageRows.map((r) => r.id).filter((id) => !(id in viewCounts) && !pendingCountIds.has(id));
+    if (missing.length === 0) return;
+    const next = new Set(pendingCountIds);
+    missing.forEach((id) => next.add(id));
+    setPendingCountIds(next);
+    (async () => {
+      const { data } = await supabase
+        .from("link_views")
+        .select("link_id")
+        .in("link_id", missing);
+      const counts: Record<string, number> = {};
+      missing.forEach((id) => (counts[id] = 0));
+      (data || []).forEach((v: any) => {
+        counts[v.link_id] = (counts[v.link_id] || 0) + 1;
+      });
+      setViewCounts((prev) => ({ ...prev, ...counts }));
+      setPendingCountIds((prev) => {
+        const s = new Set(prev);
+        missing.forEach((id) => s.delete(id));
+        return s;
+      });
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageRows]);
+
   async function toggleDisabled(l: LinkRow) {
     const { error } = await supabase.from("links").update({ disabled: !l.disabled }).eq("id", l.id);
     if (error) return toast.error(error.message);
@@ -156,6 +187,10 @@ function Dashboard() {
     const { error } = await supabase.from("links").delete().eq("id", l.id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
+    setViewCounts((prev) => {
+      const { [l.id]: _drop, ...rest } = prev;
+      return rest;
+    });
     if (userId) load(userId);
   }
 
@@ -300,14 +335,14 @@ function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.length === 0 && (
+                  {pageRows.length === 0 && (
                     <tr>
                       <td colSpan={8}>
                         <EmptyState />
                       </td>
                     </tr>
                   )}
-                  {filtered.map((l) => {
+                  {pageRows.map((l) => {
                     const s = statusOf(l, Date.now());
                     return (
                       <React.Fragment key={l.id}>
@@ -387,12 +422,12 @@ function Dashboard() {
 
             {/* Mobile cards */}
             <div className="grid gap-3 md:hidden">
-              {filtered.length === 0 && (
+              {pageRows.length === 0 && (
                 <div className="rounded-xl border border-border">
                   <EmptyState />
                 </div>
               )}
-              {filtered.map((l) => {
+              {pageRows.map((l) => {
                 const s = statusOf(l, Date.now());
                 return (
                   <div key={l.id} className="rounded-xl border border-border bg-background/40 p-3.5">
@@ -453,6 +488,36 @@ function Dashboard() {
                 );
               })}
             </div>
+
+            {filtered.length > 0 && (
+              <div className="mt-4 flex flex-col items-center justify-between gap-3 border-t border-border/60 pt-4 sm:flex-row">
+                <div className="text-xs text-muted-foreground tabular-nums">
+                  Showing {(currentPage - 1) * PAGE_SIZE + 1}–
+                  {Math.min(currentPage * PAGE_SIZE, filtered.length)} of {filtered.length}
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage <= 1}
+                    className="press inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" /> Prev
+                  </button>
+                  <span className="px-2 text-xs tabular-nums text-muted-foreground">
+                    Page {currentPage} / {pageCount}
+                  </span>
+                  <button
+                    onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+                    disabled={currentPage >= pageCount}
+                    className="press inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Next page"
+                  >
+                    Next <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </FadeUp>
       </main>
