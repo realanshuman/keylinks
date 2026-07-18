@@ -210,27 +210,19 @@ export type Database = {
         }
         Returns: boolean
       }
-      redeem_link:
-        | {
-            Args: { _password_hash: string; _slug: string }
-            Returns: {
-              code: string
-              remaining_uses: number
-            }[]
-          }
-        | {
-            Args: {
-              _country?: string
-              _device?: string
-              _password_hash: string
-              _referrer?: string
-              _slug: string
-            }
-            Returns: {
-              code: string
-              remaining_uses: number
-            }[]
-          }
+      redeem_link: {
+        Args: {
+          _country?: string
+          _device?: string
+          _password_hash: string
+          _referrer?: string
+          _slug: string
+        }
+        Returns: {
+          code: string
+          remaining_uses: number
+        }[]
+      }
     }
     Enums: {
       app_role: "admin"
