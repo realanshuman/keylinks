@@ -412,15 +412,22 @@ function Dashboard() {
                     </div>
                     <div className="mt-1 truncate font-mono text-xs text-muted-foreground">{l.code}</div>
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                      <span>Views: {viewCounts[l.id] ?? 0}</span>
                       <span>
-                        Uses: {l.use_count}
+                        Redeems: {l.use_count}
                         {l.max_uses ? ` / ${l.max_uses}` : ""}
                       </span>
                       <span>
                         Expires: {l.expires_at ? new Date(l.expires_at).toLocaleDateString() : "Never"}
                       </span>
                     </div>
-                    <div className="mt-3 grid grid-cols-4 gap-2 border-t border-border/60 pt-3">
+                    <div className="mt-3 grid grid-cols-5 gap-2 border-t border-border/60 pt-3">
+                      <MobileAction
+                        label="Stats"
+                        onClick={() => setExpandedId(expandedId === l.id ? null : l.id)}
+                      >
+                        <BarChart3 className="h-4 w-4" />
+                      </MobileAction>
                       <MobileAction label="Copy" onClick={() => copyLink(l)}>
                         <Copy className="h-4 w-4" />
                       </MobileAction>
@@ -437,6 +444,11 @@ function Dashboard() {
                         <Trash2 className="h-4 w-4" />
                       </MobileAction>
                     </div>
+                    {expandedId === l.id && (
+                      <div className="mt-3 border-t border-border/60 pt-3">
+                        <LinkAnalyticsPanel link={l} viewsCount={viewCounts[l.id] ?? 0} />
+                      </div>
+                    )}
                   </div>
                 );
               })}
