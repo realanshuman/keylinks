@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   Search,
@@ -16,6 +16,13 @@ import {
   Timer,
   Inbox,
   Plus,
+  BarChart3,
+  Eye,
+  Globe,
+  Smartphone,
+  Monitor,
+  Tablet,
+  Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -60,6 +67,8 @@ function Dashboard() {
   const [ready, setReady] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [links, setLinks] = useState<LinkRow[]>([]);
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const reduce = useReducedMotion();
@@ -85,7 +94,20 @@ function Dashboard() {
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) return toast.error(error.message);
-    setLinks((data as LinkRow[]) || []);
+    const rows = (data as LinkRow[]) || [];
+    setLinks(rows);
+    if (rows.length > 0) {
+      const ids = rows.map((r) => r.id);
+      const { data: views } = await supabase
+        .from("link_views")
+        .select("link_id")
+        .in("link_id", ids);
+      const counts: Record<string, number> = {};
+      (views || []).forEach((v: any) => {
+        counts[v.link_id] = (counts[v.link_id] || 0) + 1;
+      });
+      setViewCounts(counts);
+    }
   }
 
   const stats = useMemo(() => {
@@ -269,9 +291,9 @@ function Dashboard() {
                   <tr>
                     <th className="px-3 py-2.5 font-medium">Slug</th>
                     <th className="px-3 py-2.5 font-medium">Label</th>
-                    <th className="px-3 py-2.5 font-medium">Code</th>
                     <th className="px-3 py-2.5 font-medium">Status</th>
-                    <th className="px-3 py-2.5 font-medium">Uses</th>
+                    <th className="px-3 py-2.5 font-medium">Views</th>
+                    <th className="px-3 py-2.5 font-medium">Redeems</th>
                     <th className="px-3 py-2.5 font-medium">Expires</th>
                     <th className="px-3 py-2.5 font-medium">Created</th>
                     <th className="px-3 py-2.5"></th>
@@ -288,7 +310,8 @@ function Dashboard() {
                   {filtered.map((l) => {
                     const s = statusOf(l, Date.now());
                     return (
-                      <tr key={l.id} className="border-t border-border transition-colors hover:bg-accent/30">
+                      <React.Fragment key={l.id}>
+                      <tr className="border-t border-border transition-colors hover:bg-accent/30">
                         <td className="px-3 py-2.5 font-mono text-xs">
                           <a
                             target="_blank"
@@ -299,12 +322,14 @@ function Dashboard() {
                             /r/{l.slug}
                           </a>
                         </td>
-                        <td className="max-w-[160px] truncate px-3 py-2.5">
+                        <td className="max-w-[180px] truncate px-3 py-2.5">
                           {l.label ?? <span className="text-muted-foreground">—</span>}
                         </td>
-                        <td className="max-w-[160px] truncate px-3 py-2.5 font-mono text-xs">{l.code}</td>
                         <td className="px-3 py-2.5">
                           <StatusBadge status={s} />
+                        </td>
+                        <td className="px-3 py-2.5 tabular-nums text-muted-foreground">
+                          {viewCounts[l.id] ?? 0}
                         </td>
                         <td className="px-3 py-2.5 tabular-nums">
                           {l.use_count}
@@ -318,6 +343,12 @@ function Dashboard() {
                         </td>
                         <td className="px-3 py-2.5 text-right">
                           <div className="flex justify-end gap-1">
+                            <IconAction
+                              title="Analytics"
+                              onClick={() => setExpandedId(expandedId === l.id ? null : l.id)}
+                            >
+                              <BarChart3 className="h-3.5 w-3.5" />
+                            </IconAction>
                             <IconAction title="Copy link" onClick={() => copyLink(l)}>
                               <Copy className="h-3.5 w-3.5" />
                             </IconAction>
@@ -337,6 +368,17 @@ function Dashboard() {
                           </div>
                         </td>
                       </tr>
+                      {expandedId === l.id && (
+                        <tr className="border-t border-border bg-accent/20">
+                          <td colSpan={8} className="px-3 py-4">
+                            <LinkAnalyticsPanel
+                              link={l}
+                              viewsCount={viewCounts[l.id] ?? 0}
+                            />
+                          </td>
+                        </tr>
+                      )}
+                      </React.Fragment>
                     );
                   })}
                 </tbody>
@@ -370,15 +412,22 @@ function Dashboard() {
                     </div>
                     <div className="mt-1 truncate font-mono text-xs text-muted-foreground">{l.code}</div>
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                      <span>Views: {viewCounts[l.id] ?? 0}</span>
                       <span>
-                        Uses: {l.use_count}
+                        Redeems: {l.use_count}
                         {l.max_uses ? ` / ${l.max_uses}` : ""}
                       </span>
                       <span>
                         Expires: {l.expires_at ? new Date(l.expires_at).toLocaleDateString() : "Never"}
                       </span>
                     </div>
-                    <div className="mt-3 grid grid-cols-4 gap-2 border-t border-border/60 pt-3">
+                    <div className="mt-3 grid grid-cols-5 gap-2 border-t border-border/60 pt-3">
+                      <MobileAction
+                        label="Stats"
+                        onClick={() => setExpandedId(expandedId === l.id ? null : l.id)}
+                      >
+                        <BarChart3 className="h-4 w-4" />
+                      </MobileAction>
                       <MobileAction label="Copy" onClick={() => copyLink(l)}>
                         <Copy className="h-4 w-4" />
                       </MobileAction>
@@ -395,6 +444,11 @@ function Dashboard() {
                         <Trash2 className="h-4 w-4" />
                       </MobileAction>
                     </div>
+                    {expandedId === l.id && (
+                      <div className="mt-3 border-t border-border/60 pt-3">
+                        <LinkAnalyticsPanel link={l} viewsCount={viewCounts[l.id] ?? 0} />
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -504,6 +558,234 @@ function EmptyState() {
         <Inbox className="h-5 w-5" />
       </span>
       <p className="text-sm text-muted-foreground">No links yet. Create your first one.</p>
+    </div>
+  );
+}
+
+function DeviceIcon({ device }: { device: string | null }) {
+  const d = (device || "").toLowerCase();
+  if (d === "mobile") return <Smartphone className="h-3 w-3" />;
+  if (d === "tablet") return <Tablet className="h-3 w-3" />;
+  if (d === "bot") return <Bot className="h-3 w-3" />;
+  if (d === "desktop") return <Monitor className="h-3 w-3" />;
+  return <Globe className="h-3 w-3" />;
+}
+
+function countryFlag(cc: string | null): string {
+  if (!cc || cc.length !== 2) return "🌐";
+  const A = 0x1f1e6;
+  const up = cc.toUpperCase();
+  return String.fromCodePoint(A + up.charCodeAt(0) - 65, A + up.charCodeAt(1) - 65);
+}
+
+function LinkAnalyticsPanel({
+  link,
+  viewsCount,
+}: {
+  link: { id: string; use_count: number };
+  viewsCount: number;
+}) {
+  const [loading, setLoading] = useState(true);
+  const [views, setViews] = useState<any[]>([]);
+  const [redemptions, setRedemptions] = useState<any[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      const [v, r] = await Promise.all([
+        supabase
+          .from("link_views")
+          .select("created_at, country, device, referrer")
+          .eq("link_id", link.id)
+          .order("created_at", { ascending: false })
+          .limit(15),
+        supabase
+          .from("redemptions")
+          .select("revealed_at, country, device, referrer")
+          .eq("link_id", link.id)
+          .order("revealed_at", { ascending: false })
+          .limit(15),
+      ]);
+      if (cancelled) return;
+      setViews((v.data as any[]) || []);
+      setRedemptions((r.data as any[]) || []);
+      setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [link.id]);
+
+  const conversion =
+    viewsCount > 0 ? Math.round((link.use_count / viewsCount) * 100) : link.use_count > 0 ? 100 : 0;
+
+  const topCountries = aggregate(views, "country").slice(0, 4);
+  const topDevices = aggregate(views, "device").slice(0, 4);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-2">
+        <MiniStat label="Views" value={viewsCount} icon={<Eye className="h-3.5 w-3.5" />} />
+        <MiniStat label="Redeems" value={link.use_count} icon={<Ticket className="h-3.5 w-3.5" />} />
+        <MiniStat label="Convert" value={`${conversion}%`} icon={<BarChart3 className="h-3.5 w-3.5" />} />
+      </div>
+
+      {(topCountries.length > 0 || topDevices.length > 0) && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {topCountries.length > 0 && (
+            <BreakdownList
+              title="Countries"
+              items={topCountries.map((c) => ({
+                key: c.key,
+                label: `${countryFlag(c.key)} ${c.key || "Unknown"}`,
+                value: c.count,
+              }))}
+            />
+          )}
+          {topDevices.length > 0 && (
+            <BreakdownList
+              title="Devices"
+              items={topDevices.map((c) => ({
+                key: c.key,
+                label: c.key || "unknown",
+                value: c.count,
+              }))}
+            />
+          )}
+        </div>
+      )}
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <EventList
+          title={`Recent views (${views.length})`}
+          empty={loading ? "Loading…" : "No views yet"}
+          rows={views.map((v) => ({
+            ts: v.created_at,
+            country: v.country,
+            device: v.device,
+            referrer: v.referrer,
+          }))}
+        />
+        <EventList
+          title={`Recent redemptions (${redemptions.length})`}
+          empty={loading ? "Loading…" : "No redemptions yet"}
+          rows={redemptions.map((v) => ({
+            ts: v.revealed_at,
+            country: v.country,
+            device: v.device,
+            referrer: v.referrer,
+          }))}
+        />
+      </div>
+    </div>
+  );
+}
+
+function aggregate(rows: any[], key: string): Array<{ key: string; count: number }> {
+  const map = new Map<string, number>();
+  rows.forEach((r) => {
+    const k = (r[key] ?? "") as string;
+    map.set(k, (map.get(k) || 0) + 1);
+  });
+  return Array.from(map.entries())
+    .map(([key, count]) => ({ key, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+function MiniStat({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: number | string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+        <span className="text-primary">{icon}</span>
+        {label}
+      </div>
+      <div className="mt-0.5 text-lg font-semibold tabular-nums">{value}</div>
+    </div>
+  );
+}
+
+function BreakdownList({
+  title,
+  items,
+}: {
+  title: string;
+  items: Array<{ key: string; label: string; value: number }>;
+}) {
+  const max = Math.max(1, ...items.map((i) => i.value));
+  return (
+    <div className="rounded-lg border border-border bg-background/40 p-3">
+      <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">{title}</div>
+      <div className="space-y-1.5">
+        {items.map((i) => (
+          <div key={i.key} className="flex items-center gap-2 text-xs">
+            <span className="w-24 shrink-0 truncate">{i.label}</span>
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-accent">
+              <div
+                className="h-full rounded-full bg-primary/70"
+                style={{ width: `${(i.value / max) * 100}%` }}
+              />
+            </div>
+            <span className="w-8 text-right tabular-nums text-muted-foreground">{i.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EventList({
+  title,
+  rows,
+  empty,
+}: {
+  title: string;
+  empty: string;
+  rows: Array<{ ts: string; country: string | null; device: string | null; referrer: string | null }>;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-background/40">
+      <div className="border-b border-border px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+        {title}
+      </div>
+      {rows.length === 0 ? (
+        <div className="px-3 py-4 text-center text-xs text-muted-foreground">{empty}</div>
+      ) : (
+        <ul className="divide-y divide-border/60">
+          {rows.map((r, i) => {
+            let ref = "";
+            try {
+              ref = r.referrer ? new URL(r.referrer).hostname : "";
+            } catch {
+              ref = r.referrer || "";
+            }
+            return (
+              <li key={i} className="flex items-center gap-2 px-3 py-2 text-xs">
+                <span className="w-16 shrink-0 tabular-nums text-muted-foreground">
+                  {new Date(r.ts).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                </span>
+                <span className="shrink-0" title={r.country ?? "Unknown"}>
+                  {countryFlag(r.country)}
+                </span>
+                <span className="inline-flex shrink-0 items-center gap-1 text-muted-foreground">
+                  <DeviceIcon device={r.device} />
+                </span>
+                <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                  {ref || <span className="opacity-60">direct</span>}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

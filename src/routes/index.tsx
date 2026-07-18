@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -59,18 +59,39 @@ function Index() {
   const [maxUsesPreset, setMaxUsesPreset] = useState("unlimited");
   const [customMaxUses, setCustomMaxUses] = useState("");
   const [notes, setNotes] = useState("");
+  const [customSlug, setCustomSlug] = useState("");
+  const [signedIn, setSignedIn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [results, setResults] = useState<Generated[]>([]);
   const reduce = useReducedMotion();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   const codeList = codes
     .split(/\r?\n/)
     .map((c) => c.trim())
     .filter(Boolean);
 
+  const slugValid = !customSlug || /^[a-z0-9][a-z0-9-]{2,39}$/.test(customSlug);
+  const canUseCustomSlug = signedIn && codeList.length <= 1 && quantity <= 1;
+
+
+
   async function generate() {
     if (codeList.length === 0) {
       toast.error("Please enter at least one code");
+      return;
+    }
+    if (customSlug && !canUseCustomSlug) {
+      toast.error("Custom slug only works for a single link");
+      return;
+    }
+    if (customSlug && !slugValid) {
+      toast.error("Slug must be 3–40 chars: a–z, 0–9, hyphen");
       return;
     }
     setBusy(true);
@@ -109,9 +130,10 @@ function Index() {
             expires_at: expiresAt,
           });
       } else {
+        const useCustom = !!(customSlug && canUseCustomSlug);
         for (let i = 0; i < Math.max(1, quantity); i++)
           rows.push({
-            slug: makeSlug(),
+            slug: useCustom ? customSlug : makeSlug(),
             label: label || null,
             code: codeList[0],
             notes: notes || null,
@@ -126,7 +148,15 @@ function Index() {
         .from("links")
         .insert(rows)
         .select("id, slug, code, created_at, expires_at, max_uses");
-      if (error) throw error;
+      if (error) {
+        const m = (error.message || "").toLowerCase();
+        if (m.includes("duplicate") || m.includes("unique") || error.code === "23505") {
+          throw new Error("That slug is already taken — try another");
+        }
+        if (m.includes("reserved_slug")) throw new Error("That slug is reserved — try another");
+        if (m.includes("links_slug_format")) throw new Error("Slug must be 3–40 chars: a–z, 0–9, hyphen");
+        throw error;
+      }
 
       const generated: Generated[] = await Promise.all(
         (data || []).map(async (r) => {
@@ -294,6 +324,32 @@ function Index() {
                       onChange={(e) => setLabel(e.target.value)}
                       placeholder="e.g. Customer name, Order #1234"
                     />
+                  </Field>
+                  <Field
+                    label="Custom slug"
+                    hint={signedIn ? (canUseCustomSlug ? "Optional" : "Single link only") : "Sign in to unlock"}
+                    icon={<LinkIcon className="h-3.5 w-3.5" />}
+                  >
+                    <div className="flex items-stretch overflow-hidden rounded-md border border-input bg-background focus-within:border-ring">
+                      <span className="flex items-center whitespace-nowrap border-r border-input bg-muted/40 px-2.5 font-mono text-xs text-muted-foreground">
+                        keylinks.space/r/
+                      </span>
+                      <input
+                        value={customSlug}
+                        onChange={(e) =>
+                          setCustomSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
+                        }
+                        disabled={!signedIn || !canUseCustomSlug}
+                        placeholder={signedIn ? "welcome-2026" : "sign in to use"}
+                        maxLength={40}
+                        className="w-full bg-transparent px-3 py-2 font-mono text-sm outline-none placeholder:text-muted-foreground/60 disabled:cursor-not-allowed disabled:opacity-60"
+                      />
+                    </div>
+                    {customSlug && !slugValid && (
+                      <p className="mt-1 text-xs text-destructive">
+                        3–40 chars, lowercase letters, numbers, hyphen. Must start with a letter or number.
+                      </p>
+                    )}
                   </Field>
                 </Section>
 
